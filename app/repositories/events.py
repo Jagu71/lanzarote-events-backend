@@ -29,8 +29,9 @@ class EventRepository:
         count_stmt = select(func.count(func.distinct(Event.id)))
 
         if category:
-            stmt = stmt.join(Event.categories).where(Category.slug == category)
-            count_stmt = count_stmt.select_from(Event).join(Event.categories).where(Category.slug == category)
+            category_filter = Event.categories.any(Category.slug == category)
+            stmt = stmt.where(category_filter)
+            count_stmt = count_stmt.select_from(Event).where(category_filter)
         else:
             count_stmt = count_stmt.select_from(Event)
 
@@ -45,24 +46,19 @@ class EventRepository:
             count_stmt = count_stmt.where(Event.is_free == free_only)
         if text:
             pattern = f"%{text.lower()}%"
-            stmt = stmt.join(Event.translations).where(
-                or_(
-                    func.lower(EventTranslation.title).like(pattern),
-                    func.lower(EventTranslation.summary).like(pattern),
-                    func.lower(EventTranslation.description).like(pattern),
-                    func.lower(func.coalesce(Event.venue_name, "")).like(pattern),
-                )
+            translation_filter = or_(
+                func.lower(EventTranslation.title).like(pattern),
+                func.lower(EventTranslation.summary).like(pattern),
+                func.lower(EventTranslation.description).like(pattern),
             )
-            count_stmt = count_stmt.join(Event.translations).where(
-                or_(
-                    func.lower(EventTranslation.title).like(pattern),
-                    func.lower(EventTranslation.summary).like(pattern),
-                    func.lower(EventTranslation.description).like(pattern),
-                    func.lower(func.coalesce(Event.venue_name, "")).like(pattern),
-                )
+            text_filter = or_(
+                Event.translations.any(translation_filter),
+                func.lower(func.coalesce(Event.venue_name, "")).like(pattern),
             )
+            stmt = stmt.where(text_filter)
+            count_stmt = count_stmt.where(text_filter)
 
-        stmt = stmt.order_by(Event.starts_at.asc().nullslast(), Event.created_at.desc()).limit(limit).offset(offset).distinct()
+        stmt = stmt.order_by(Event.starts_at.asc().nullslast(), Event.created_at.desc()).limit(limit).offset(offset)
         total = self.db.scalar(count_stmt) or 0
         events = list(self.db.scalars(stmt).all())
         return events, total
