@@ -1,0 +1,1 @@
+"""Lanzarote events backend package."""

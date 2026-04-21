@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lanzarote en Vivo</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero__content">
+          <p class="eyebrow">Agenda cultural y ocio en Lanzarote</p>
+          <h1>Busca qué pasa en la isla durante los próximos 7 días.</h1>
+          <p class="hero__lead">
+            Un frontend básico conectado al backend de eventos para filtrar por fecha, categoría y texto libre.
+          </p>
+        </div>
+        <div class="hero__badge">
+          <span>Backend + scraping real</span>
+          <strong id="hero-range-label">Hoy hasta +7 días</strong>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="filters-panel">
+          <form id="filters-form" class="filters">
+            <label class="field">
+              <span>Fecha inicial</span>
+              <input id="starts-after" name="starts_after" type="date" required />
+            </label>
+
+            <label class="field">
+              <span>Ventana</span>
+              <select id="days" name="days">
+                <option value="1">1 día</option>
+                <option value="2">2 días</option>
+                <option value="3">3 días</option>
+                <option value="4">4 días</option>
+                <option value="5">5 días</option>
+                <option value="6">6 días</option>
+                <option value="7" selected>7 días</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Categoría</span>
+              <select id="category" name="category">
+                <option value="">Todas</option>
+              </select>
+            </label>
+
+            <label class="field field--wide">
+              <span>Buscar</span>
+              <input
+                id="query"
+                name="q"
+                type="search"
+                placeholder="Concierto, teatro, Jameos, cine, literatura..."
+              />
+            </label>
+
+            <label class="toggle">
+              <input id="free-only" name="free_only" type="checkbox" />
+              <span>Solo gratis</span>
+            </label>
+
+            <button class="button button--primary" type="submit">Buscar</button>
+          </form>
+        </section>
+
+        <section class="results-panel">
+          <div class="results-toolbar">
+            <div>
+              <p class="results-toolbar__label">Resultados</p>
+              <h2 id="results-summary">Cargando eventos...</h2>
+            </div>
+            <div class="results-meta">
+              <span id="active-range"></span>
+            </div>
+          </div>
+
+          <div id="status" class="status" aria-live="polite"></div>
+          <div id="results-grid" class="results-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <aside id="detail-panel" class="detail-panel" aria-hidden="true">
+      <div class="detail-panel__backdrop" data-close-detail></div>
+      <div class="detail-panel__sheet">
+        <button class="detail-panel__close" type="button" data-close-detail aria-label="Cerrar detalle">×</button>
+        <div id="detail-content" class="detail-content"></div>
+      </div>
+    </aside>
+
+    <template id="event-card-template">
+      <article class="event-card">
+        <button class="event-card__button" type="button">
+          <div class="event-card__image-wrap">
+            <img class="event-card__image" alt="" />
+          </div>
+          <div class="event-card__body">
+            <div class="event-card__badges"></div>
+            <h3 class="event-card__title"></h3>
+            <p class="event-card__summary"></p>
+            <dl class="event-card__meta">
+              <div>
+                <dt>Fecha</dt>
+                <dd class="event-card__date"></dd>
+              </div>
+              <div>
+                <dt>Lugar</dt>
+                <dd class="event-card__venue"></dd>
+              </div>
+            </dl>
+          </div>
+        </button>
+      </article>
+    </template>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

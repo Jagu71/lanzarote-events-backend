@@ -1,0 +1,44 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env.deploy
+    command: >
+      sh -c "python -m scripts.init_db &&
+             python -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    volumes:
+      - app_data:/data
+
+  scheduler:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env.deploy
+    command: >
+      sh -c "python -m scripts.init_db &&
+             python -m scripts.run_scheduler"
+    volumes:
+      - app_data:/data
+    depends_on:
+      - app
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    env_file:
+      - .env.deploy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  app_data:
+  caddy_data:
+  caddy_config:
