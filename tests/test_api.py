@@ -51,6 +51,18 @@ def setup_module() -> None:
         ]
         event.categories = [music]
         db.add(event)
+        broken_event = Event(
+            slug="evento-roto-20261108",
+            source_name="lavoz_lanzarote",
+            external_id="broken-1",
+            source_url="https://example.com/broken-event",
+            fingerprint="fp-broken-1",
+            starts_at=datetime.fromisoformat("2026-11-07T10:00:00+00:00"),
+            is_free=False,
+            venue_name="Arrecife",
+        )
+        broken_event.categories = [music]
+        db.add(broken_event)
         db.commit()
 
 
@@ -84,7 +96,9 @@ def test_events_support_days_window():
     response = client.get("/api/v1/events", params={"lang": "en", "starts_after": "2026-11-01", "days": 7})
     payload = response.json()
     assert response.status_code == 200
-    assert payload["total"] == 1
+    assert payload["total"] == 2
+    assert len(payload["items"]) == 2
+    assert any(item["title"] == "Evento sin título" for item in payload["items"])
 
 
 def test_events_reject_ranges_over_seven_days():

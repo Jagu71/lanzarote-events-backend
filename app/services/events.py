@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+import logging
+from types import SimpleNamespace
 from zoneinfo import ZoneInfo
 
 from fastapi import HTTPException
@@ -11,6 +13,9 @@ from app.schemas.event import EventDetail, EventListResponse, EventSummary
 from app.services.categories import CategoryService
 from app.services.translations import pick_event_translation
 from app.utils.date_parsing import parse_date_filter, range_exceeds_days
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -49,9 +54,17 @@ class EventService:
             limit=query.limit,
             offset=query.offset,
         )
+        items = []
+        skipped = 0
+        for event in events:
+            try:
+                items.append(self._to_summary(event, query.lang))
+            except Exception:
+                skipped += 1
+                logger.exception("Skipping malformed event during list serialization: %s", event.id)
         return EventListResponse(
-            items=[self._to_summary(event, query.lang) for event in events],
-            total=total,
+            items=items,
+            total=max(0, total - skipped),
             limit=query.limit,
             offset=query.offset,
         )
@@ -80,7 +93,12 @@ class EventService:
         )
 
     def _to_summary(self, event: Event, lang: str) -> EventSummary:
-        translation = pick_event_translation(event.translations, lang)
+        translation = pick_event_translation(event.translations, lang) or SimpleNamespace(
+            language=lang or event.language_origin or "es",
+            title="Evento sin título",
+            summary=None,
+            description=None,
+        )
         categories = [self.category_service._to_public(category, lang) for category in event.categories]
         return EventSummary(
             id=event.id,
@@ -89,7 +107,7 @@ class EventService:
             summary=translation.summary,
             description=translation.description,
             translation_language=translation.language,
-            available_languages=sorted([item.language for item in event.translations]),
+            available_languages=sorted([item.language for item in event.translations if item.language]),
             starts_at=self._isoformat(event.starts_at),
             ends_at=self._isoformat(event.ends_at),
             is_free=event.is_free,
