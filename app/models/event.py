@@ -49,7 +49,7 @@ class Event(Base):
     latitude: Mapped[float | None] = mapped_column(Float, nullable=True)
     longitude: Mapped[float | None] = mapped_column(Float, nullable=True)
     organizer_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    audience: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    audience: Mapped[str | None] = mapped_column(Text, nullable=True)
     language_origin: Mapped[str] = mapped_column(String(10), default="es")
     source_payload: Mapped[dict] = mapped_column(JSON, default=dict)
     last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
