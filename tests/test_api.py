@@ -105,3 +105,23 @@ def test_events_reject_ranges_over_seven_days():
     response = client.get("/api/v1/events", params={"starts_after": "2026-11-01", "starts_before": "2026-11-10"})
     assert response.status_code == 400
     assert response.json()["detail"] == "Date range cannot exceed 7 days"
+
+
+def test_admin_sources_are_listed():
+    response = client.get("/api/v1/admin/sources")
+    payload = response.json()
+    assert response.status_code == 200
+    keys = {item["key"] for item in payload}
+    assert "culturalanzarote_program" in keys
+    assert "cact_lanzarote" in keys
+    assert "eventbrite" in keys
+
+
+def test_admin_sources_can_be_toggled():
+    response = client.patch("/api/v1/admin/sources/eventbrite", json={"enabled": True})
+    assert response.status_code == 200
+    assert response.json()["enabled"] is True
+
+    response = client.patch("/api/v1/admin/sources/eventbrite", json={"enabled": False})
+    assert response.status_code == 200
+    assert response.json()["enabled"] is False

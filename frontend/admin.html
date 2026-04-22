@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin de Fuentes</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero hero--compact">
+        <div class="hero__content">
+          <p class="eyebrow">Administración de scrapers</p>
+          <h1>Activa, desactiva y vigila las fuentes.</h1>
+          <p class="hero__lead">
+            Panel mínimo para saber qué fuentes están realmente conectadas y cuáles están corriendo en cada ingesta.
+          </p>
+          <p class="hero__actions">
+            <a class="link-button link-button--dark" href="/">Volver al buscador</a>
+          </p>
+        </div>
+        <div class="hero__badge">
+          <span>Control de fuentes</span>
+          <strong id="sources-summary">Cargando...</strong>
+        </div>
+      </header>
+
+      <main class="results-panel admin-panel">
+        <div class="results-toolbar">
+          <div>
+            <p class="results-toolbar__label">Fuentes</p>
+            <h2>Estado del scraping</h2>
+          </div>
+          <div class="admin-actions">
+            <button id="sync-sources" class="button button--primary" type="button">Sincronizar catálogo</button>
+          </div>
+        </div>
+
+        <div id="admin-status" class="status" aria-live="polite"></div>
+        <div id="sources-grid" class="sources-grid"></div>
+      </main>
+    </div>
+
+    <template id="source-card-template">
+      <article class="source-card">
+        <div class="source-card__head">
+          <div>
+            <p class="source-card__eyebrow"></p>
+            <h3 class="source-card__title"></h3>
+          </div>
+          <label class="source-toggle">
+            <input class="source-toggle__input" type="checkbox" />
+            <span class="source-toggle__label">Activa</span>
+          </label>
+        </div>
+        <p class="source-card__description"></p>
+        <dl class="source-card__meta">
+          <div>
+            <dt>URL</dt>
+            <dd class="source-card__url"></dd>
+          </div>
+          <div>
+            <dt>Último estado</dt>
+            <dd class="source-card__run-status"></dd>
+          </div>
+          <div>
+            <dt>Procesados</dt>
+            <dd class="source-card__processed"></dd>
+          </div>
+          <div>
+            <dt>Creados</dt>
+            <dd class="source-card__created"></dd>
+          </div>
+          <div>
+            <dt>Actualizados</dt>
+            <dd class="source-card__updated"></dd>
+          </div>
+          <div>
+            <dt>Última ejecución</dt>
+            <dd class="source-card__run-at"></dd>
+          </div>
+        </dl>
+        <p class="source-card__message"></p>
+      </article>
+    </template>
+
+    <script src="/static/admin.js" defer></script>
+  </body>
+</html>

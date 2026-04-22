@@ -131,6 +131,7 @@ class BaseScraper(ABC):
     source_name: str
     source_url: str
     fixture_name: str | None = None
+    last_error_message: str | None = None
 
     def fixture_text(self, fixture_name: str | None = None) -> str:
         target_fixture = fixture_name or self.fixture_name
@@ -153,11 +154,13 @@ class BaseScraper(ABC):
 
     def collect(self) -> list[RawScrapedEvent]:
         try:
+            self.last_error_message = None
             html = self.fetch()
             events = self.parse(html)
             logger.info("%s: extracted %s events", self.source_name, len(events))
             return events
-        except Exception:
+        except Exception as exc:
+            self.last_error_message = str(exc)
             logger.exception("%s: scraper failed", self.source_name)
             return []
 

@@ -40,3 +40,8 @@ def healthcheck() -> dict[str, str]:
 @app.get("/", include_in_schema=False)
 def frontend_index() -> FileResponse:
     return FileResponse(frontend_dir / "index.html")
+
+
+@app.get("/admin", include_in_schema=False)
+def admin_index() -> FileResponse:
+    return FileResponse(frontend_dir / "admin.html")

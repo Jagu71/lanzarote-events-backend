@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.db.base import Base
 from app.db.session import engine
-from app.models import category, event  # noqa: F401
+from app.models import category, event, source  # noqa: F401
 from app.services.categories import CategoryService
+from app.services.sources import SourceService
 
 
 def init_db() -> None:
@@ -12,6 +13,7 @@ def init_db() -> None:
     _apply_runtime_migrations()
     with Session(engine) as session:
         CategoryService(session).ensure_default_categories()
+        SourceService(session).ensure_default_sources()
         session.commit()
 
 
