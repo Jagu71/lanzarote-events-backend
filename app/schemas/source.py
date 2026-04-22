@@ -18,3 +18,18 @@ class SourcePublic(BaseModel):
 
 class SourceUpdateRequest(BaseModel):
     enabled: bool
+
+
+class SourceCandidatePublic(BaseModel):
+    id: int
+    url: str
+    label: str | None = None
+    status: str
+    notes: str | None = None
+    created_at: str | None = None
+
+
+class SourceCandidateCreateRequest(BaseModel):
+    url: str
+    label: str | None = None
+    notes: str | None = None

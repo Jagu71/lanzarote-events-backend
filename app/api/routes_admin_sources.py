@@ -2,7 +2,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
-from app.schemas.source import SourcePublic, SourceUpdateRequest
+from app.schemas.source import (
+    SourceCandidateCreateRequest,
+    SourceCandidatePublic,
+    SourcePublic,
+    SourceUpdateRequest,
+)
 from app.services.sources import SourceService
 
 
@@ -31,3 +36,13 @@ def update_source(source_key: str, payload: SourceUpdateRequest, db: Session = D
     service.ensure_default_sources()
     db.commit()
     return service.set_enabled(source_key, payload.enabled)
+
+
+@router.get("/candidates", response_model=list[SourceCandidatePublic])
+def list_source_candidates(db: Session = Depends(get_db)) -> list[SourceCandidatePublic]:
+    return SourceService(db).list_candidates()
+
+
+@router.post("/candidates", response_model=SourceCandidatePublic)
+def create_source_candidate(payload: SourceCandidateCreateRequest, db: Session = Depends(get_db)) -> SourceCandidatePublic:
+    return SourceService(db).add_candidate(url=payload.url, label=payload.label, notes=payload.notes)

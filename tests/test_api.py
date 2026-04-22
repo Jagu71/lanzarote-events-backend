@@ -125,3 +125,26 @@ def test_admin_sources_can_be_toggled():
     response = client.patch("/api/v1/admin/sources/eventbrite", json={"enabled": False})
     assert response.status_code == 200
     assert response.json()["enabled"] is False
+
+
+def test_admin_source_candidates_can_be_created():
+    response = client.post(
+        "/api/v1/admin/sources/candidates",
+        json={
+            "url": "https://example.com/agenda-cultural",
+            "label": "Ejemplo Agenda",
+            "notes": "Posible fuente a revisar",
+        },
+    )
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["url"] == "https://example.com/agenda-cultural"
+    assert payload["label"] == "Ejemplo Agenda"
+    assert payload["status"] == "pending"
+
+
+def test_admin_source_candidates_are_listed():
+    response = client.get("/api/v1/admin/sources/candidates")
+    payload = response.json()
+    assert response.status_code == 200
+    assert any(item["url"] == "https://example.com/agenda-cultural" for item in payload)

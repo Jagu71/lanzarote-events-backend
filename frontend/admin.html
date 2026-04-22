@@ -37,6 +37,32 @@
         </div>
 
         <div id="admin-status" class="status" aria-live="polite"></div>
+        <section class="candidate-panel">
+          <div class="results-toolbar results-toolbar--compact">
+            <div>
+              <p class="results-toolbar__label">Nuevas fuentes</p>
+              <h2>Registrar URL candidata</h2>
+            </div>
+          </div>
+
+          <form id="candidate-form" class="candidate-form">
+            <label class="field field--wide">
+              <span>URL nueva</span>
+              <input id="candidate-url" name="url" type="url" placeholder="https://ejemplo.com/agenda" required />
+            </label>
+            <label class="field">
+              <span>Etiqueta</span>
+              <input id="candidate-label" name="label" type="text" placeholder="Nombre corto opcional" />
+            </label>
+            <label class="field field--wide">
+              <span>Notas</span>
+              <input id="candidate-notes" name="notes" type="text" placeholder="Qué crees que publica esta fuente" />
+            </label>
+            <button class="button button--primary" type="submit">Guardar candidata</button>
+          </form>
+
+          <div id="candidates-grid" class="candidates-grid"></div>
+        </section>
         <div id="sources-grid" class="sources-grid"></div>
       </main>
     </div>
@@ -81,6 +107,16 @@
           </div>
         </dl>
         <p class="source-card__message"></p>
+      </article>
+    </template>
+
+    <template id="candidate-card-template">
+      <article class="candidate-card">
+        <p class="candidate-card__status"></p>
+        <h3 class="candidate-card__title"></h3>
+        <p class="candidate-card__url"></p>
+        <p class="candidate-card__notes"></p>
+        <p class="candidate-card__created"></p>
       </article>
     </template>
 

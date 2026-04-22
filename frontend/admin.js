@@ -2,17 +2,25 @@ const adminElements = {
   status: document.querySelector("#admin-status"),
   summary: document.querySelector("#sources-summary"),
   grid: document.querySelector("#sources-grid"),
+  candidatesGrid: document.querySelector("#candidates-grid"),
   syncButton: document.querySelector("#sync-sources"),
+  candidateForm: document.querySelector("#candidate-form"),
+  candidateUrl: document.querySelector("#candidate-url"),
+  candidateLabel: document.querySelector("#candidate-label"),
+  candidateNotes: document.querySelector("#candidate-notes"),
   template: document.querySelector("#source-card-template"),
+  candidateTemplate: document.querySelector("#candidate-card-template"),
 };
 
 const adminState = {
   sources: [],
+  candidates: [],
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
   adminElements.syncButton.addEventListener("click", syncSources);
-  await loadSources();
+  adminElements.candidateForm.addEventListener("submit", submitCandidate);
+  await Promise.all([loadSources(), loadCandidates()]);
 });
 
 async function loadSources() {
@@ -30,6 +38,19 @@ async function loadSources() {
   }
 }
 
+async function loadCandidates() {
+  try {
+    const response = await fetch("/api/v1/admin/sources/candidates");
+    if (!response.ok) {
+      throw new Error("No se pudieron cargar las candidatas");
+    }
+    adminState.candidates = await response.json();
+    renderCandidates();
+  } catch (error) {
+    setAdminStatus(error.message);
+  }
+}
+
 async function syncSources() {
   setAdminStatus("Sincronizando catálogo...");
   try {
@@ -40,6 +61,31 @@ async function syncSources() {
     adminState.sources = await response.json();
     renderSources();
     setAdminStatus("Catálogo sincronizado.");
+  } catch (error) {
+    setAdminStatus(error.message);
+  }
+}
+
+async function submitCandidate(event) {
+  event.preventDefault();
+  setAdminStatus("Guardando URL candidata...");
+  try {
+    const response = await fetch("/api/v1/admin/sources/candidates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        url: adminElements.candidateUrl.value.trim(),
+        label: adminElements.candidateLabel.value.trim(),
+        notes: adminElements.candidateNotes.value.trim(),
+      }),
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(payload.detail || "No se pudo guardar la candidata");
+    }
+    adminElements.candidateForm.reset();
+    await loadCandidates();
+    setAdminStatus("URL candidata guardada.");
   } catch (error) {
     setAdminStatus(error.message);
   }
@@ -94,6 +140,26 @@ function renderSources() {
   }
 
   adminElements.grid.appendChild(fragment);
+}
+
+function renderCandidates() {
+  adminElements.candidatesGrid.innerHTML = "";
+  if (!adminState.candidates.length) {
+    adminElements.candidatesGrid.innerHTML = '<div class="empty-state">Todavía no hay URLs candidatas guardadas.</div>';
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  for (const candidate of adminState.candidates) {
+    const node = adminElements.candidateTemplate.content.firstElementChild.cloneNode(true);
+    node.querySelector(".candidate-card__status").textContent = candidate.status || "pending";
+    node.querySelector(".candidate-card__title").textContent = candidate.label || "Nueva fuente candidata";
+    node.querySelector(".candidate-card__url").textContent = candidate.url;
+    node.querySelector(".candidate-card__notes").textContent = candidate.notes || "Sin notas";
+    node.querySelector(".candidate-card__created").textContent = candidate.created_at ? formatDateTime(candidate.created_at) : "Sin fecha";
+    fragment.appendChild(node);
+  }
+  adminElements.candidatesGrid.appendChild(fragment);
 }
 
 function humanStatus(source) {
