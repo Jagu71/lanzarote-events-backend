@@ -118,6 +118,10 @@ def test_admin_sources_are_listed():
     assert "tinajo_agenda" in keys
     assert "teguise_cultura" in keys
     assert "tias_cultura" in keys
+    assert "arrecife_cultura" in keys
+    assert "yaiza_cultura" in keys
+    assert "sanbartolome_eventos" in keys
+    assert "haria_cultura" in keys
 
 
 def test_admin_sources_can_be_toggled():

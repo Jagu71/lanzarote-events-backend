@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from app.scrapers.base import BaseScraper
+from app.scrapers.sources.arrecife_cultura import ArrecifeCulturaScraper
 from app.scrapers.sources.cabildo import CabildoScraper
 from app.scrapers.sources.cact import CactScraper
 from app.scrapers.sources.culturalanzarote_program import CulturalLanzaroteProgramScraper
@@ -9,9 +10,11 @@ from app.scrapers.sources.culturalanzarote_tickets import CulturalLanzaroteTicke
 from app.scrapers.sources.eventbrite import EventbriteScraper
 from app.scrapers.sources.lavoz_lanzarote import LaVozLanzaroteScraper
 from app.scrapers.sources.ocio_lanzarote import OcioLanzaroteScraper
+from app.scrapers.sources.sanbartolome_eventos import SanBartolomeEventosScraper
 from app.scrapers.sources.teguise_cultura import TeguiseCulturaScraper
 from app.scrapers.sources.tias_cultura import TiasCulturaScraper
 from app.scrapers.sources.tinajo_agenda import TinajoAgendaScraper
+from app.scrapers.sources.yaiza_cultura import YaizaCulturaScraper
 
 
 @dataclass(frozen=True)
@@ -75,6 +78,43 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         description="Noticias y agenda cultural oficial del Ayuntamiento de Tías.",
         enabled_by_default=True,
         scraper_factory=TiasCulturaScraper,
+    ),
+    SourceDefinition(
+        key="arrecife_cultura",
+        label="Arrecife Cultura",
+        description="Taxonomía oficial de Cultura Arrecife con publicaciones de agenda y programación.",
+        enabled_by_default=True,
+        scraper_factory=ArrecifeCulturaScraper,
+    ),
+    SourceDefinition(
+        key="yaiza_cultura",
+        label="Yaiza Cultura",
+        description="Área oficial de Educación, Cultura y Patrimonio del Ayuntamiento de Yaiza.",
+        enabled_by_default=True,
+        scraper_factory=YaizaCulturaScraper,
+    ),
+    SourceDefinition(
+        key="sanbartolome_eventos",
+        label="San Bartolomé Eventos",
+        description="Sección oficial de eventos municipales y agenda del Ayuntamiento de San Bartolomé.",
+        enabled_by_default=True,
+        scraper_factory=SanBartolomeEventosScraper,
+    ),
+    SourceDefinition(
+        key="haria_cultura",
+        label="Haría Cultura",
+        description="Fuente municipal pendiente de URL oficial confirmada.",
+        enabled_by_default=False,
+        scraper_factory=lambda: type(
+            "HariaPlaceholderScraper",
+            (BaseScraper,),
+            {
+                "source_name": "haria_cultura",
+                "source_url": "",
+                "fixture_name": None,
+                "parse": lambda self, html: [],
+            },
+        )(),
     ),
     SourceDefinition(
         key="cabildo_lanzarote",

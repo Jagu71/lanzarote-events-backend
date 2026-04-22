@@ -41,6 +41,22 @@ class Settings(BaseSettings):
         default="https://www.ayuntamientodetias.es/ayuntamiento/servicio-al-ciudadano/cultura/?mode=list",
         alias="TIAS_CULTURA_URL",
     )
+    arrecife_cultura_url: str = Field(
+        default="https://www.arrecife.es/taxonomy/term/69",
+        alias="ARRECIFE_CULTURA_URL",
+    )
+    yaiza_cultura_url: str = Field(
+        default="https://yaiza.es/category/educacion-cultura-y-patrimonio/",
+        alias="YAIZA_CULTURA_URL",
+    )
+    sanbartolome_eventos_url: str = Field(
+        default="https://www.sanbartolome.es/eventos-ayuntamiento/",
+        alias="SANBARTOLOME_EVENTOS_URL",
+    )
+    haria_cultura_url: str = Field(
+        default="",
+        alias="HARIA_CULTURA_URL",
+    )
     ocio_lanzarote_events_url: str = Field(
         default="https://ociolanzarote.com/en/events",
         alias="OCIO_LANZAROTE_EVENTS_URL",

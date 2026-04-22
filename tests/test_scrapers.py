@@ -1,13 +1,16 @@
 from pathlib import Path
 
+from app.scrapers.sources.arrecife_cultura import ArrecifeCulturaScraper
 from app.scrapers.sources.cact import CactScraper
 from app.scrapers.sources.culturalanzarote_program import CulturalLanzaroteProgramScraper
 from app.scrapers.sources.culturalanzarote_tickets import CulturalLanzaroteTicketsScraper
 from app.scrapers.sources.eventbrite import EventbriteScraper
 from app.scrapers.sources.lavoz_lanzarote import LaVozLanzaroteScraper
+from app.scrapers.sources.sanbartolome_eventos import SanBartolomeEventosScraper
 from app.scrapers.sources.teguise_cultura import TeguiseCulturaScraper
 from app.scrapers.sources.tias_cultura import TiasCulturaScraper
 from app.scrapers.sources.tinajo_agenda import TinajoAgendaScraper
+from app.scrapers.sources.yaiza_cultura import YaizaCulturaScraper
 
 
 FIXTURES_DIR = Path(__file__).resolve().parents[1] / "data" / "fixtures"
@@ -71,3 +74,24 @@ def test_tias_cultura_scraper_extracts_event_like_news():
     events = TiasCulturaScraper().parse(html)
     assert len(events) == 3
     assert events[0].starts_at_raw == "27/03/2025"
+
+
+def test_arrecife_cultura_scraper_extracts_municipal_posts():
+    html = (FIXTURES_DIR / "arrecife_cultura_listing.html").read_text(encoding="utf-8")
+    events = ArrecifeCulturaScraper().parse(html)
+    assert len(events) == 2
+    assert "Microconcierto de historias" in events[0].title
+
+
+def test_yaiza_cultura_scraper_extracts_posts():
+    html = (FIXTURES_DIR / "yaiza_cultura_listing.html").read_text(encoding="utf-8")
+    events = YaizaCulturaScraper().parse(html)
+    assert len(events) == 2
+    assert "febrero cultural de Yaiza" in events[0].title
+
+
+def test_sanbartolome_eventos_scraper_extracts_municipal_events():
+    html = (FIXTURES_DIR / "sanbartolome_eventos_listing.html").read_text(encoding="utf-8")
+    events = SanBartolomeEventosScraper().parse(html)
+    assert len(events) == 2
+    assert "SONORO FESTIVAL" in events[0].title
