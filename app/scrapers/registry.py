@@ -9,6 +9,9 @@ from app.scrapers.sources.culturalanzarote_tickets import CulturalLanzaroteTicke
 from app.scrapers.sources.eventbrite import EventbriteScraper
 from app.scrapers.sources.lavoz_lanzarote import LaVozLanzaroteScraper
 from app.scrapers.sources.ocio_lanzarote import OcioLanzaroteScraper
+from app.scrapers.sources.teguise_cultura import TeguiseCulturaScraper
+from app.scrapers.sources.tias_cultura import TiasCulturaScraper
+from app.scrapers.sources.tinajo_agenda import TinajoAgendaScraper
 
 
 @dataclass(frozen=True)
@@ -51,6 +54,27 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         description="Cobertura editorial de agenda/cultura útil para discovery secundario.",
         enabled_by_default=True,
         scraper_factory=LaVozLanzaroteScraper,
+    ),
+    SourceDefinition(
+        key="tinajo_agenda",
+        label="Tinajo Agenda",
+        description="Agenda oficial municipal de Tinajo con eventos y actividades públicas.",
+        enabled_by_default=True,
+        scraper_factory=TinajoAgendaScraper,
+    ),
+    SourceDefinition(
+        key="teguise_cultura",
+        label="Teguise Cultura",
+        description="Página oficial de Cultura y Patrimonio del Ayuntamiento de Teguise.",
+        enabled_by_default=True,
+        scraper_factory=TeguiseCulturaScraper,
+    ),
+    SourceDefinition(
+        key="tias_cultura",
+        label="Tías Cultura",
+        description="Noticias y agenda cultural oficial del Ayuntamiento de Tías.",
+        enabled_by_default=True,
+        scraper_factory=TiasCulturaScraper,
     ),
     SourceDefinition(
         key="cabildo_lanzarote",

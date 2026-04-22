@@ -5,6 +5,9 @@ from app.scrapers.sources.culturalanzarote_program import CulturalLanzaroteProgr
 from app.scrapers.sources.culturalanzarote_tickets import CulturalLanzaroteTicketsScraper
 from app.scrapers.sources.eventbrite import EventbriteScraper
 from app.scrapers.sources.lavoz_lanzarote import LaVozLanzaroteScraper
+from app.scrapers.sources.teguise_cultura import TeguiseCulturaScraper
+from app.scrapers.sources.tias_cultura import TiasCulturaScraper
+from app.scrapers.sources.tinajo_agenda import TinajoAgendaScraper
 
 
 FIXTURES_DIR = Path(__file__).resolve().parents[1] / "data" / "fixtures"
@@ -46,3 +49,25 @@ def test_lavoz_lanzarote_scraper_extracts_future_event_cards():
     events = LaVozLanzaroteScraper().parse(html)
     assert len(events) == 1
     assert "Jorge Bolaños" in events[0].title
+
+
+def test_tinajo_agenda_scraper_extracts_agenda_cards():
+    html = (FIXTURES_DIR / "tinajo_agenda_listing.html").read_text(encoding="utf-8")
+    events = TinajoAgendaScraper().parse(html)
+    assert len(events) == 2
+    assert events[0].title == "VOLCANO TRIATLON"
+    assert events[0].starts_at_raw == "25 de abril"
+
+
+def test_teguise_cultura_scraper_extracts_culture_posts():
+    html = (FIXTURES_DIR / "teguise_cultura_listing.html").read_text(encoding="utf-8")
+    events = TeguiseCulturaScraper().parse(html)
+    assert len(events) == 2
+    assert "Casa-Museo del Timple" in events[0].title
+
+
+def test_tias_cultura_scraper_extracts_event_like_news():
+    html = (FIXTURES_DIR / "tias_cultura_listing.html").read_text(encoding="utf-8")
+    events = TiasCulturaScraper().parse(html)
+    assert len(events) == 3
+    assert events[0].starts_at_raw == "27/03/2025"

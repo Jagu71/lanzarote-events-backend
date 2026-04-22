@@ -115,6 +115,9 @@ def test_admin_sources_are_listed():
     assert "culturalanzarote_program" in keys
     assert "cact_lanzarote" in keys
     assert "eventbrite" in keys
+    assert "tinajo_agenda" in keys
+    assert "teguise_cultura" in keys
+    assert "tias_cultura" in keys
 
 
 def test_admin_sources_can_be_toggled():

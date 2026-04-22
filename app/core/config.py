@@ -29,6 +29,18 @@ class Settings(BaseSettings):
         default="https://culturalanzarote.sacatuentrada.es/es",
         alias="CULTURALANZAROTE_TICKETS_URL",
     )
+    tinajo_agenda_url: str = Field(
+        default="https://www.tinajo.es/agenda",
+        alias="TINAJO_AGENDA_URL",
+    )
+    teguise_cultura_url: str = Field(
+        default="https://teguise.es/servicios/cultura/",
+        alias="TEGUISE_CULTURA_URL",
+    )
+    tias_cultura_url: str = Field(
+        default="https://www.ayuntamientodetias.es/ayuntamiento/servicio-al-ciudadano/cultura/?mode=list",
+        alias="TIAS_CULTURA_URL",
+    )
     ocio_lanzarote_events_url: str = Field(
         default="https://ociolanzarote.com/en/events",
         alias="OCIO_LANZAROTE_EVENTS_URL",
