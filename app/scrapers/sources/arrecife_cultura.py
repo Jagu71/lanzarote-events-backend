@@ -17,6 +17,10 @@ class ArrecifeCulturaScraper(BaseScraper):
     source_url = settings.arrecife_cultura_url
     fixture_name = "arrecife_cultura_listing.html"
 
+    def fetch(self) -> str:
+        # Arrecife's endpoint serves a broken certificate chain intermittently.
+        return self.fetch_url(self.source_url, verify=False)
+
     def parse(self, html: str) -> list[RawScrapedEvent]:
         soup = BeautifulSoup(html, "lxml")
         events: list[RawScrapedEvent] = []

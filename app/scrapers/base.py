@@ -140,11 +140,25 @@ class BaseScraper(ABC):
         fixture_path = settings.fixtures_dir / target_fixture
         return Path(fixture_path).read_text(encoding="utf-8")
 
-    def fetch_url(self, url: str, *, fixture_name: str | None = None) -> str:
+    def fetch_url(
+        self,
+        url: str,
+        *,
+        fixture_name: str | None = None,
+        extra_headers: dict[str, str] | None = None,
+        verify: bool = True,
+    ) -> str:
         if settings.scraper_use_fixtures and (fixture_name or self.fixture_name):
             return self.fixture_text(fixture_name)
         headers = {"User-Agent": settings.scraper_user_agent}
-        with httpx.Client(timeout=settings.scraper_timeout_seconds, headers=headers, follow_redirects=True) as client:
+        if extra_headers:
+            headers.update(extra_headers)
+        with httpx.Client(
+            timeout=settings.scraper_timeout_seconds,
+            headers=headers,
+            follow_redirects=True,
+            verify=verify,
+        ) as client:
             response = client.get(url)
             response.raise_for_status()
             return response.text

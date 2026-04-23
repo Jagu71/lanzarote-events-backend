@@ -17,6 +17,16 @@ class SanBartolomeEventosScraper(BaseScraper):
     source_url = settings.sanbartolome_eventos_url
     fixture_name = "sanbartolome_eventos_listing.html"
 
+    def fetch(self) -> str:
+        return self.fetch_url(
+            self.source_url,
+            extra_headers={
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
+                "Referer": "https://www.sanbartolome.es/",
+            },
+        )
+
     def parse(self, html: str) -> list[RawScrapedEvent]:
         soup = BeautifulSoup(html, "lxml")
         events: list[RawScrapedEvent] = []

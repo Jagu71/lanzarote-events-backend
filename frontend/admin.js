@@ -129,7 +129,7 @@ function renderSources() {
     node.querySelector(".source-card__created").textContent = String(source.last_created ?? 0);
     node.querySelector(".source-card__updated").textContent = String(source.last_updated ?? 0);
     node.querySelector(".source-card__run-at").textContent = source.last_run_at ? formatDateTime(source.last_run_at) : "Nunca";
-    node.querySelector(".source-card__message").textContent = source.last_run_message || "";
+    node.querySelector(".source-card__message").textContent = humanErrorMessage(source.last_run_message);
 
     const toggle = node.querySelector(".source-toggle__input");
     toggle.checked = Boolean(source.enabled);
@@ -173,9 +173,40 @@ function humanStatus(source) {
     return "Sin eventos";
   }
   if (source.last_run_status === "error") {
-    return "Error";
+    return classifyError(source.last_run_message);
   }
   return source.enabled ? "Activa sin ejecutar" : "Desactivada";
+}
+
+function classifyError(message) {
+  const text = (message || "").toLowerCase();
+  if (text.includes("403")) {
+    return "Bloqueada";
+  }
+  if (text.includes("404")) {
+    return "URL rota";
+  }
+  if (text.includes("certificate_verify_failed") || text.includes("ssl")) {
+    return "SSL";
+  }
+  return "Error";
+}
+
+function humanErrorMessage(message) {
+  const text = (message || "").trim();
+  if (!text) {
+    return "";
+  }
+  if (text.toLowerCase().includes("403")) {
+    return "La web ha bloqueado temporalmente el scraper con un 403.";
+  }
+  if (text.toLowerCase().includes("404")) {
+    return "La URL configurada no existe o ha cambiado.";
+  }
+  if (text.toLowerCase().includes("certificate_verify_failed") || text.toLowerCase().includes("ssl")) {
+    return "El servidor devuelve un problema de certificado SSL.";
+  }
+  return text;
 }
 
 function formatDateTime(value) {
