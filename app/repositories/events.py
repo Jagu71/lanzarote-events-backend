@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import and_, func, not_, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.category import Category
@@ -41,7 +41,11 @@ class EventRepository:
         if starts_before:
             stmt = stmt.where(Event.starts_at <= starts_before)
             count_stmt = count_stmt.where(Event.starts_at <= starts_before)
-        if free_only is not None:
+        if free_only is True:
+            free_filter = self._free_only_filter()
+            stmt = stmt.where(free_filter)
+            count_stmt = count_stmt.where(free_filter)
+        elif free_only is False:
             stmt = stmt.where(Event.is_free == free_only)
             count_stmt = count_stmt.where(Event.is_free == free_only)
         if text:
@@ -62,6 +66,34 @@ class EventRepository:
         total = self.db.scalar(count_stmt) or 0
         events = list(self.db.scalars(stmt).all())
         return events, total
+
+    @staticmethod
+    def _free_only_filter():
+        price_mentions = or_(
+            func.lower(func.coalesce(EventTranslation.title, "")).like("%€%"),
+            func.lower(func.coalesce(EventTranslation.summary, "")).like("%€%"),
+            func.lower(func.coalesce(EventTranslation.description, "")).like("%€%"),
+            func.lower(func.coalesce(EventTranslation.title, "")).like("%precio%"),
+            func.lower(func.coalesce(EventTranslation.summary, "")).like("%precio%"),
+            func.lower(func.coalesce(EventTranslation.description, "")).like("%precio%"),
+            func.lower(func.coalesce(EventTranslation.title, "")).like("%price%"),
+            func.lower(func.coalesce(EventTranslation.summary, "")).like("%price%"),
+            func.lower(func.coalesce(EventTranslation.description, "")).like("%price%"),
+            func.lower(func.coalesce(EventTranslation.title, "")).like("%euros%"),
+            func.lower(func.coalesce(EventTranslation.summary, "")).like("%euros%"),
+            func.lower(func.coalesce(EventTranslation.description, "")).like("%euros%"),
+            func.lower(func.coalesce(EventTranslation.title, "")).like("%euro%"),
+            func.lower(func.coalesce(EventTranslation.summary, "")).like("%euro%"),
+            func.lower(func.coalesce(EventTranslation.description, "")).like("%euro%"),
+        )
+        return or_(
+            Event.is_free.is_(True),
+            and_(
+                Event.is_free.is_(None),
+                or_(Event.price_text.is_(None), Event.price_text == ""),
+                not_(Event.translations.any(price_mentions)),
+            ),
+        )
 
     def get_event(self, event_id: str) -> Event | None:
         stmt = (
