@@ -38,7 +38,7 @@ class Settings(BaseSettings):
         alias="TEGUISE_CULTURA_URL",
     )
     tias_cultura_url: str = Field(
-        default="https://www.ayuntamientodetias.es/ayuntamiento/servicio-al-ciudadano/cultura/?mode=list",
+        default="https://www.ayuntamientodetias.es/ayuntamiento/servicio-al-ciudadano/cultura/",
         alias="TIAS_CULTURA_URL",
     )
     arrecife_cultura_url: str = Field(
@@ -68,6 +68,10 @@ class Settings(BaseSettings):
     eventbrite_events_url: str = Field(
         default="https://www.eventbrite.com/d/spain--arrecife--222299/lanzarote/",
         alias="EVENTBRITE_EVENTS_URL",
+    )
+    ecoentradas_lanzarote_url: str = Field(
+        default="https://www.ecoentradas.com/?island=2&q=",
+        alias="ECOENTRADAS_LANZAROTE_URL",
     )
     cooltura_lanzarote_url: str = Field(
         default="https://www.coolturalanzarote.com/",

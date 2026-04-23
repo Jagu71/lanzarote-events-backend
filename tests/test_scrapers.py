@@ -4,6 +4,7 @@ from app.scrapers.sources.arrecife_cultura import ArrecifeCulturaScraper
 from app.scrapers.sources.cact import CactScraper
 from app.scrapers.sources.culturalanzarote_program import CulturalLanzaroteProgramScraper
 from app.scrapers.sources.culturalanzarote_tickets import CulturalLanzaroteTicketsScraper
+from app.scrapers.sources.ecoentradas_lanzarote import EcoEntradasLanzaroteScraper
 from app.scrapers.sources.eventbrite import EventbriteScraper
 from app.scrapers.sources.lavoz_lanzarote import LaVozLanzaroteScraper
 from app.scrapers.sources.sanbartolome_eventos import SanBartolomeEventosScraper
@@ -28,6 +29,15 @@ def test_eventbrite_scraper_extracts_cards():
     html = (FIXTURES_DIR / "eventbrite_listing.html").read_text(encoding="utf-8")
     events = EventbriteScraper().parse(html)
     assert len(events) == 2
+    assert events[1].is_free is True
+
+
+def test_ecoentradas_scraper_extracts_lanzarote_cards():
+    html = (FIXTURES_DIR / "ecoentradas_lanzarote_listing.html").read_text(encoding="utf-8")
+    events = EcoEntradasLanzaroteScraper().parse(html)
+    assert len(events) == 2
+    assert events[0].title == "III Congreso de Autismo en Lanzarote"
+    assert events[0].venue_name == "Teatro Municipal de Tías"
     assert events[1].is_free is True
 
 

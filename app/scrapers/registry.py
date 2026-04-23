@@ -7,6 +7,7 @@ from app.scrapers.sources.cabildo import CabildoScraper
 from app.scrapers.sources.cact import CactScraper
 from app.scrapers.sources.culturalanzarote_program import CulturalLanzaroteProgramScraper
 from app.scrapers.sources.culturalanzarote_tickets import CulturalLanzaroteTicketsScraper
+from app.scrapers.sources.ecoentradas_lanzarote import EcoEntradasLanzaroteScraper
 from app.scrapers.sources.eventbrite import EventbriteScraper
 from app.scrapers.sources.lavoz_lanzarote import LaVozLanzaroteScraper
 from app.scrapers.sources.ocio_lanzarote import OcioLanzaroteScraper
@@ -50,6 +51,13 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         description="Eventos y actividades publicadas por los Centros de Arte, Cultura y Turismo.",
         enabled_by_default=True,
         scraper_factory=CactScraper,
+    ),
+    SourceDefinition(
+        key="ecoentradas_lanzarote",
+        label="EcoEntradas Lanzarote",
+        description="Cartelera de venta y reserva de entradas ya filtrada para Lanzarote.",
+        enabled_by_default=True,
+        scraper_factory=EcoEntradasLanzaroteScraper,
     ),
     SourceDefinition(
         key="lavoz_lanzarote",
