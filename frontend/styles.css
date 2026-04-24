@@ -728,6 +728,11 @@ select {
     gap: 10px;
   }
 
+  .hero__actions--stack .button,
+  .hero__actions--stack .link-button {
+    display: none;
+  }
+
   .hero__badge {
     padding: 16px;
     gap: 8px;
