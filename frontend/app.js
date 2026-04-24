@@ -176,8 +176,10 @@ function renderFeatured(featuredItems) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "event-card__button";
+    const placeholder = placeholderMarkup(event, feature.label);
     button.innerHTML = `
       <div class="event-card__image-wrap">
+        ${placeholder}
         ${event.image_url ? `<img class="event-card__image is-visible" src="${event.image_url}" alt="${escapeHtml(event.title)}" />` : ""}
       </div>
       <div class="event-card__body">
@@ -222,12 +224,18 @@ function renderEvents(events, total) {
     const button = node.querySelector(".event-card__button");
     const image = node.querySelector(".event-card__image");
     const badges = node.querySelector(".event-card__badges");
+    const placeholderKicker = node.querySelector(".event-card__placeholder-kicker");
+    const placeholderTitle = node.querySelector(".event-card__placeholder-title");
+    const placeholderMeta = node.querySelector(".event-card__placeholder-meta");
 
     node.querySelector(".event-card__title").textContent = event.title;
     node.querySelector(".event-card__summary").textContent = event.summary || "Sin resumen disponible.";
     node.querySelector(".event-card__date").textContent = formatDate(event.starts_at);
     node.querySelector(".event-card__venue").textContent = event.venue_name || "Lugar pendiente";
     node.querySelector(".event-card__cta").textContent = "Ver plan";
+    placeholderKicker.textContent = event.categories?.[0]?.name || "Plan en Lanzarote";
+    placeholderTitle.textContent = compactSourceLabel(event.source_name);
+    placeholderMeta.textContent = event.image_url ? "" : "Sin imagen disponible";
 
     const badgeMarkup = [];
     if (event.categories?.length) {
@@ -382,6 +390,33 @@ function featuredCta(slot) {
   if (slot === "imminent") return "Ver el plan que empieza antes";
   if (slot === "popular") return "Ver el plan más potente";
   return "Ver una propuesta distinta";
+}
+
+function placeholderMarkup(event, label) {
+  return `
+    <div class="event-card__placeholder">
+      <p class="event-card__placeholder-kicker">${escapeHtml(event.categories?.[0]?.name || label || "Plan en Lanzarote")}</p>
+      <strong class="event-card__placeholder-title">${escapeHtml(compactSourceLabel(event.source_name))}</strong>
+      <span class="event-card__placeholder-meta">${event.image_url ? "" : "Sin imagen disponible"}</span>
+    </div>
+  `;
+}
+
+function compactSourceLabel(sourceName) {
+  const sourceMap = {
+    ecoentradas_lanzarote: "EcoEntradas",
+    culturalanzarote_program: "Cultura Lanzarote",
+    culturalanzarote_tickets: "Sacatuentrada",
+    cact_lanzarote: "CACT",
+    lavoz_lanzarote: "La Voz",
+    tinajo_agenda: "Tinajo",
+    teguise_cultura: "Teguise",
+    tias_cultura: "Tías",
+    yaiza_cultura: "Yaiza",
+    arrecife_cultura: "Arrecife",
+    sanbartolome_eventos: "San Bartolomé",
+  };
+  return sourceMap[sourceName] || sourceName.replaceAll("_", " ");
 }
 
 function escapeHtml(value) {

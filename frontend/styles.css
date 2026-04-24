@@ -361,6 +361,7 @@ select {
 }
 
 .event-card__image-wrap {
+  position: relative;
   aspect-ratio: 16 / 10;
   background:
     linear-gradient(135deg, rgba(203, 93, 46, 0.2), rgba(217, 164, 65, 0.18)),
@@ -369,6 +370,8 @@ select {
 }
 
 .event-card__image {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -377,6 +380,38 @@ select {
 
 .event-card__image.is-visible {
   display: block;
+}
+
+.event-card__placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  align-content: end;
+  gap: 6px;
+  padding: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.3), transparent 36%),
+    linear-gradient(145deg, rgba(20, 33, 61, 0.2), rgba(20, 33, 61, 0.04));
+}
+
+.event-card__placeholder-kicker,
+.event-card__placeholder-meta {
+  margin: 0;
+  color: rgba(20, 33, 61, 0.72);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.event-card__placeholder-title {
+  display: block;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  line-height: 0.95;
+  color: rgba(20, 33, 61, 0.92);
 }
 
 .event-card__body {
