@@ -679,7 +679,7 @@ select {
 @media (max-width: 640px) {
   .page-shell {
     width: min(100% - 20px, 100%);
-    padding-top: 16px;
+    padding-top: 12px;
   }
 
   .hero,
@@ -687,13 +687,14 @@ select {
   .results-panel,
   .featured-panel,
   .bridge-panel {
-    padding: 18px;
+    padding: 16px;
     border-radius: 24px;
   }
 
   .hero h1 {
-    max-width: none;
-    font-size: 2.7rem;
+    max-width: 8ch;
+    font-size: clamp(2.2rem, 10vw, 3rem);
+    line-height: 0.9;
   }
 
   .results-grid {
@@ -702,5 +703,58 @@ select {
 
   .hero__actions--stack {
     flex-direction: column;
+  }
+
+  .hero {
+    gap: 14px;
+  }
+
+  .eyebrow {
+    margin-bottom: 8px;
+    font-size: 0.7rem;
+  }
+
+  .hero__lead {
+    margin-top: 12px;
+    font-size: 0.95rem;
+    line-height: 1.42;
+  }
+
+  .hero__actions {
+    margin-top: 14px;
+  }
+
+  .hero__actions--stack {
+    gap: 10px;
+  }
+
+  .hero__badge {
+    padding: 16px;
+    gap: 8px;
+  }
+
+  .hero__badge strong {
+    font-size: 1.05rem;
+    line-height: 1.1;
+  }
+
+  .hero__badge p {
+    font-size: 0.92rem;
+    line-height: 1.38;
+  }
+
+  .home-flow {
+    gap: 18px;
+    margin-top: 18px;
+  }
+
+  .featured-panel .results-toolbar {
+    margin-bottom: 12px;
+  }
+
+  .featured-panel .results-toolbar h2,
+  .bridge-panel h2 {
+    font-size: 1.5rem;
+    line-height: 1.05;
   }
 }
