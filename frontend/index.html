@@ -3,47 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lanzarote en Vivo</title>
+    <title>¿Qué hacemos el fin de semana?</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <div class="page-shell">
-      <header class="hero">
+      <header class="hero hero--weekend">
         <div class="hero__content">
-          <p class="eyebrow">Agenda cultural y ocio en Lanzarote</p>
-          <h1>Busca qué pasa en la isla durante los próximos 7 días.</h1>
+          <p class="eyebrow">Lanzarote en las próximas 48 horas</p>
+          <h1>¿Qué hacemos el fin de semana?</h1>
           <p class="hero__lead">
-            Un frontend básico conectado al backend de eventos para filtrar por fecha, categoría y texto libre.
+            Te proponemos tres planes pensados para decidir rápido: uno inminente, uno potente y uno más alternativo.
           </p>
-          <p class="hero__actions">
-            <a class="link-button link-button--dark" href="/admin">Admin de fuentes</a>
-          </p>
+          <div class="hero__actions hero__actions--stack">
+            <a class="button button--primary" href="#featured-section">Ver planes ahora</a>
+            <a class="link-button link-button--dark" href="#filters-panel">Aquí hay más propuestas</a>
+          </div>
         </div>
-        <div class="hero__badge">
-          <span>Backend + scraping real</span>
-          <strong id="hero-range-label">Hoy hasta +7 días</strong>
+        <div class="hero__badge hero__badge--weekend">
+          <span>Ventana editorial activa</span>
+          <strong id="hero-range-label">Ahora mismo hasta +48h</strong>
+          <p id="hero-context">Solo mostramos lo que todavía está por delante de tu hora de búsqueda.</p>
         </div>
       </header>
 
-      <main class="layout">
-        <section class="filters-panel">
-          <form id="filters-form" class="filters">
-            <label class="field">
-              <span>Fecha inicial</span>
-              <input id="starts-after" name="starts_after" type="date" required />
-            </label>
+      <main class="home-flow">
+        <section id="featured-section" class="featured-panel">
+          <div class="results-toolbar">
+            <div>
+              <p class="results-toolbar__label">Selección rápida</p>
+              <h2>Tres planes para salir ya con una idea</h2>
+            </div>
+          </div>
+          <div id="featured-grid" class="featured-grid"></div>
+        </section>
 
+        <section class="bridge-panel">
+          <p class="bridge-panel__eyebrow">Más propuestas</p>
+          <h2>Aquí tienes más planes para las próximas 48 horas.</h2>
+          <p>
+            Si ninguno de los tres destacados te convence, baja un poco y afina por hora, categoría o gratis.
+          </p>
+          <a class="button button--primary" href="#filters-panel">Ver más propuestas</a>
+        </section>
+
+        <section id="filters-panel" class="filters-panel filters-panel--wide">
+          <form id="filters-form" class="filters filters--weekend">
             <label class="field">
-              <span>Ventana</span>
-              <select id="days" name="days">
-                <option value="1">1 día</option>
-                <option value="2">2 días</option>
-                <option value="3">3 días</option>
-                <option value="4">4 días</option>
-                <option value="5">5 días</option>
-                <option value="6">6 días</option>
-                <option value="7" selected>7 días</option>
-              </select>
+              <span>Buscar desde</span>
+              <input id="starts-after" name="starts_after" type="datetime-local" required />
             </label>
 
             <label class="field">
@@ -54,12 +62,12 @@
             </label>
 
             <label class="field field--wide">
-              <span>Buscar</span>
+              <span>Buscar plan</span>
               <input
                 id="query"
                 name="q"
                 type="search"
-                placeholder="Concierto, teatro, Jameos, cine, literatura..."
+                placeholder="Concierto, teatro, infantil, mercado, cine..."
               />
             </label>
 
@@ -68,15 +76,15 @@
               <span>Solo gratis</span>
             </label>
 
-            <button class="button button--primary" type="submit">Buscar</button>
+            <button class="button button--primary" type="submit">Actualizar propuestas</button>
           </form>
         </section>
 
         <section class="results-panel">
           <div class="results-toolbar">
             <div>
-              <p class="results-toolbar__label">Resultados</p>
-              <h2 id="results-summary">Cargando eventos...</h2>
+              <p class="results-toolbar__label">Ventana activa</p>
+              <h2 id="results-summary">Cargando planes...</h2>
             </div>
             <div class="results-meta">
               <span id="active-range"></span>
@@ -117,6 +125,7 @@
                 <dd class="event-card__venue"></dd>
               </div>
             </dl>
+            <p class="event-card__cta"></p>
           </div>
         </button>
       </article>

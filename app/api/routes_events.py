@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
-from app.schemas.event import EventDetail, EventListResponse
+from app.schemas.event import EventDetail, EventListResponse, EventNowResponse
 from app.services.events import EventQuery, EventService
 
 
@@ -48,6 +48,18 @@ def search_events(
     service = EventService(db)
     query = EventQuery(lang=lang, text=q, limit=limit, offset=offset)
     return service.list_events(query)
+
+
+@router.get("/next-48h", response_model=EventNowResponse)
+def get_now_plan(
+    lang: str = Query("es"),
+    category: str | None = Query(default=None),
+    free_only: bool | None = Query(default=None),
+    search_at: str | None = Query(default=None, description="Hora de búsqueda en ISO para recomendación editorial."),
+    db: Session = Depends(get_db),
+) -> EventNowResponse:
+    service = EventService(db)
+    return service.get_now_plan(lang=lang, free_only=free_only, category=category, search_at=search_at)
 
 
 @router.get("/{event_id}", response_model=EventDetail)

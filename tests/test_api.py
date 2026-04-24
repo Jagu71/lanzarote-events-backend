@@ -35,7 +35,10 @@ def setup_module() -> None:
     with TestingSessionLocal() as db:
         music = Category(slug="music", icon="music", sort_order=1)
         music.translations = [CategoryTranslation(language="en", name="Music", description="Music events")]
+        family = Category(slug="family", icon="family", sort_order=2)
+        family.translations = [CategoryTranslation(language="en", name="Family", description="Family events")]
         db.add(music)
+        db.add(family)
         event = Event(
             slug="sunset-soundscapes-20261107",
             source_name="eventbrite",
@@ -45,6 +48,7 @@ def setup_module() -> None:
             starts_at=datetime.fromisoformat("2026-11-07T20:00:00+00:00"),
             is_free=True,
             venue_name="Jameos del Agua",
+            image_url="https://example.com/sunset.jpg",
         )
         event.translations = [
             EventTranslation(language="en", title="Sunset Soundscapes Lanzarote", summary="Live set", description="A live set."),
@@ -77,7 +81,7 @@ def setup_module() -> None:
         unknown_free_event.translations = [
             EventTranslation(language="en", title="Cinema under the stars", summary="Outdoor screening", description="Family outdoor screening."),
         ]
-        unknown_free_event.categories = [music]
+        unknown_free_event.categories = [family]
         db.add(unknown_free_event)
         priced_by_text_event = Event(
             slug="paid-talk-20261106",
@@ -95,6 +99,21 @@ def setup_module() -> None:
         ]
         priced_by_text_event.categories = [music]
         db.add(priced_by_text_event)
+        alternative_event = Event(
+            slug="creative-morning-20261107",
+            source_name="tinajo_agenda",
+            external_id="alternative-1",
+            source_url="https://example.com/creative-morning",
+            fingerprint="fp-alternative-1",
+            starts_at=datetime.fromisoformat("2026-11-07T10:00:00+00:00"),
+            is_free=True,
+            venue_name="Tinajo",
+        )
+        alternative_event.translations = [
+            EventTranslation(language="en", title="Creative morning for families", summary="Hands-on workshop", description="A family workshop."),
+        ]
+        alternative_event.categories = [family]
+        db.add(alternative_event)
         db.commit()
 
 
@@ -114,7 +133,7 @@ def test_frontend_root_serves_html():
     response = client.get("/")
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
-    assert "Lanzarote en Vivo" in response.text
+    assert "¿Qué hacemos el fin de semana?" in response.text
 
 
 def test_categories_are_localized():
@@ -128,8 +147,8 @@ def test_events_support_days_window():
     response = client.get("/api/v1/events", params={"lang": "en", "starts_after": "2026-11-01", "days": 7})
     payload = response.json()
     assert response.status_code == 200
-    assert payload["total"] == 4
-    assert len(payload["items"]) == 4
+    assert payload["total"] == 5
+    assert len(payload["items"]) == 5
     assert any(item["title"] == "Evento sin título" for item in payload["items"])
 
 
@@ -148,6 +167,20 @@ def test_free_only_includes_unknown_price_but_excludes_paid_signals():
     assert "Cinema under the stars" in titles
     assert "Paid talk" not in titles
     assert "Evento sin título" not in titles
+
+
+def test_next_48h_returns_editorial_featured_slots():
+    response = client.get(
+        "/api/v1/events/next-48h",
+        params={"lang": "en", "search_at": "2026-11-06T18:00:00+00:00"},
+    )
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["total"] == 5
+    featured = {item["slot"]: item["event"]["title"] if item["event"] else None for item in payload["featured"]}
+    assert featured["imminent"] == "Cinema under the stars"
+    assert featured["popular"] == "Sunset Soundscapes Lanzarote"
+    assert featured["alternative"] == "Creative morning for families"
 
 
 def test_admin_sources_are_listed():

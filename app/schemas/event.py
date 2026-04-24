@@ -41,3 +41,18 @@ class EventListResponse(BaseModel):
     total: int
     limit: int
     offset: int
+
+
+class FeaturedEvent(BaseModel):
+    slot: str
+    label: str
+    rationale: str
+    event: EventSummary | None = None
+
+
+class EventNowResponse(BaseModel):
+    search_at: str
+    window_hours: int
+    featured: list[FeaturedEvent]
+    items: list[EventSummary]
+    total: int
