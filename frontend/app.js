@@ -362,6 +362,9 @@ function addHours(date, hours) {
 }
 
 function toIso(value) {
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
   return parseDateTimeLocal(value).toISOString();
 }
 
