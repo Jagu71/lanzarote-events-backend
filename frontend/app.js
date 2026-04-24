@@ -24,7 +24,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   setDefaultDateTime();
   bindEvents();
   await loadCategories();
-  await refreshHome();
+  try {
+    await refreshHome();
+  } catch (error) {
+    setStatus(error.message || "No se pudieron cargar las propuestas.");
+  }
 });
 
 function bindEvents() {
@@ -116,7 +120,7 @@ async function loadFeatured() {
 
 async function loadWindowEvents() {
   const startsAfter = toIso(elements.startsAfter.value);
-  const startsBefore = toIso(addHours(new Date(elements.startsAfter.value), 48));
+  const startsBefore = toIso(addHours(parseDateTimeLocal(elements.startsAfter.value), 48));
   const params = new URLSearchParams({
     lang: "es",
     starts_after: startsAfter,
@@ -317,7 +321,7 @@ function setStatus(message) {
 }
 
 function updateRangeLabels() {
-  const start = new Date(elements.startsAfter.value);
+  const start = parseDateTimeLocal(elements.startsAfter.value);
   const end = addHours(start, 48);
   const label = `${formatDateCompact(start)} → ${formatDateCompact(end)}`;
   elements.activeRange.textContent = label;
@@ -358,7 +362,17 @@ function addHours(date, hours) {
 }
 
 function toIso(value) {
-  return new Date(value).toISOString();
+  return parseDateTimeLocal(value).toISOString();
+}
+
+function parseDateTimeLocal(value) {
+  if (!value) {
+    return new Date();
+  }
+  const [datePart, timePart = "00:00"] = value.split("T");
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hour, minute] = timePart.split(":").map(Number);
+  return new Date(year, (month || 1) - 1, day || 1, hour || 0, minute || 0, 0, 0);
 }
 
 function featuredCta(slot) {
